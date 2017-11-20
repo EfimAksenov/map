@@ -1,13 +1,19 @@
 <!-- this creates a google map on the page with the given lat/lng from -->
 <!-- the component as the initial center of the map: -->
-<agm-map [latitude]="latA" [longitude]="lngA" [zoom]="zoom">
+<agm-map (mapReady)="initMap($event)" (centerChange)="centerChange($event)" [latitude]="latA" [longitude]="lngA" [zoom]="zoom">
   <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
   <!-- <agm-circle [latitude]="lat" [longitude]="lng" [fillColor]="'red'" [radius]="10"></agm-circle> -->
 
-  <agm-polyline [editable]="true" [geodesic]="true">
-           <agm-polyline-point [latitude]="latA" [longitude]="lngA">
-           </agm-polyline-point>
-           <agm-polyline-point [latitude]="latB" [longitude]="lngB">
-           </agm-polyline-point>
-       </agm-polyline>
+  <!--<agm-polyline [editable]="true" [geodesic]="true">-->
+           <!--<agm-polyline-point [latitude]="latA" [longitude]="lngA">-->
+           <!--</agm-polyline-point>-->
+           <!--<agm-polyline-point [latitude]="latB" [longitude]="lngB">-->
+           <!--</agm-polyline-point>-->
+       <!--</agm-polyline>-->
+
+  <agm-marker-cluster imagePath="https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m">
+    <agm-marker [latitude]="latA" [longitude]="lngA" [label]="'M'"></agm-marker>
+    <agm-marker [latitude]="latB" [longitude]="lngB" [label]="'N'"></agm-marker>
+  </agm-marker-cluster>
 </agm-map>
+<button class="btn" (click)="createStop()">Create stop</button>

@@ -7,13 +7,27 @@ import { AgmCoreModule, LatLngLiteral } from '@agm/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title: string = 'My first AGM project';
-  latA: number = 54.962656;
-  lngA: number = 82.932969;
+  title = 'My first AGM project';
+  latA = 54.962656;
+  lngA = 82.932969;
 
-  latB: number = 54.96;
-  lngB: number = 82.93;
+  latB= 54.96;
+  lngB = 82.93;
 
-   zoom: number = 10;
+   zoom = 15;
+   map: any;
 
+   initMap(event) {
+     this.map = event;
+     console.log(this.map);
+     console.log(this.map.center.lat());
+   }
+
+   createStop() {
+     console.log('create stop');
+   }
+
+   centerChange(event) {
+     console.log(event);
+   }
 }
