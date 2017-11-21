@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { AgmCoreModule, LatLngLiteral } from '@agm/core';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,27 +6,9 @@ import { AgmCoreModule, LatLngLiteral } from '@agm/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'My first AGM project';
-  latA = 54.962656;
-  lngA = 82.932969;
 
-  latB= 54.96;
-  lngB = 82.93;
+  initLat = 54.962656;
+  initLng = 82.932969;
+  initZoom = 15;
 
-   zoom = 15;
-   map: any;
-
-   initMap(event) {
-     this.map = event;
-     console.log(this.map);
-     console.log(this.map.center.lat());
-   }
-
-   createStop() {
-     console.log('create stop');
-   }
-
-   centerChange(event) {
-     console.log(event);
-   }
 }

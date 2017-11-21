@@ -1,0 +1,10 @@
+<agm-map
+  (mapClick)="mapClicked($event)"
+  [latitude]="initLat" [longitude]="initLng" [zoom]="initZoom">
+  <agm-marker
+    *ngFor="let s of stops; let i = index"
+    [latitude]="s.coordinate.lat"
+    [longitude]="s.coordinate.lng"
+    [label]="'S'">
+  </agm-marker>
+</agm-map>
