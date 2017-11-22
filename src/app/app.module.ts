@@ -8,6 +8,7 @@ import {AgmCoreModule, GoogleMapsAPIWrapper, MarkerManager} from '@agm/core';
 import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
 import {StopsService} from './stops.service';
 import { CreateStopsComponent } from './create-stops/create-stops.component';
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { CreateStopsComponent } from './create-stops/create-stops.component';
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyCS8uQ84OL22djVKamgw0YEilV8xtq9_gU'
     }),
-    AgmJsMarkerClustererModule
+    AgmJsMarkerClustererModule,
+    HttpClientModule
   ],
   providers: [
     StopsService,

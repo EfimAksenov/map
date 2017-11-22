@@ -1,10 +1,31 @@
-<agm-map
-  (mapClick)="mapClicked($event)"
-  [latitude]="initLat" [longitude]="initLng" [zoom]="initZoom">
-  <agm-marker
-    *ngFor="let s of stops; let i = index"
-    [latitude]="s.coordinate.lat"
-    [longitude]="s.coordinate.lng"
-    [label]="'S'">
-  </agm-marker>
-</agm-map>
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <ul *ngFor="let g of groups">
+        <li (click)="loadGroup(g)">{{g.name}}</li>
+      </ul>
+    </div>
+    <div class="col-md-8">
+      <agm-map
+        (mapClick)="addStop($event)"
+        (mapRightClick)="deleteStop($event)"
+        [latitude]="initLat" [longitude]="initLng" [zoom]="initZoom">
+        <agm-marker
+          *ngFor="let s of stops; let i = index"
+          [latitude]="s.coordinate.lat"
+          [longitude]="s.coordinate.lng"
+          [label]="'S'"
+          (markerClick)="removeMarker(i)">
+        </agm-marker>
+      </agm-map>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4"></div>
+    <div class="col-sm-8">
+      <input type="text" [value]="group.name" #stopGroupName (keyup)="setName(stopGroupName.value)">
+      <button class="btn" (click)="saveStops()">Save</button>
+      <button class="btn" (click)="clear()">Clear</button>
+    </div>
+  </div>
+</div>
