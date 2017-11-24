@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Stop} from "../stop";
 import {StopGroup} from "../stop-group";
 import {StopsService} from "../stops.service";
+import {Observable} from "rxjs/Observable";
 
 @Component({
   selector: 'app-create-stops',
@@ -14,13 +15,13 @@ export class CreateStopsComponent implements OnInit {
   @Input("lng") initLng = 82.932969;
   @Input("zoom") initZoom = 15;
 
-  stops: Stop[];
-  groups: StopGroup[];
+  stops: Stop[] = new Array();
+  groups: Observable<StopGroup[]>;
   group: StopGroup;
 
+  timeout = 1000;
+
   constructor(private stopsService: StopsService) {
-    this.stops = new Array();
-    this.groups = new Array();
     this.group = {
       uuid: "",
       name: ""
@@ -28,10 +29,10 @@ export class CreateStopsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.groups = this.stopsService.getGroups();
+    this.loadGroups();
   }
 
-  addStop(event: MouseEvent) {
+  addStop(event: any) {
     this.stops.push({
       uuid: "",
       groupId: "",
@@ -50,14 +51,32 @@ export class CreateStopsComponent implements OnInit {
     this.group.name = stopGroupName;
   }
 
-  saveStops() {
-    this.stopsService.saveStops(this.group, this.stops);
-    this.groups = this.stopsService.getGroups();
+  saveGroup() {
+    this.stopsService.saveGroup(this.group, this.stops);
+    this.loadGroups();
   }
 
-  loadGroup(group: StopGroup) {
-    this.stops = this.stopsService.getStopesByGroupId(group.uuid);
+  updateGroup(group: StopGroup) {
+    this.stopsService.updateGroup(group, this.stops);
+    this.loadGroups();
+  }
+
+  deleteGroup(group: StopGroup) {
+    this.stopsService.deleteGroup(this.group);
+    this.loadGroups();
+  }
+
+  loadStops(group: StopGroup) {
+    this.stopsService.getStopsByGroup(group).subscribe(response => {
+      this.stops = response;
+    });
     this.group = group;
+  }
+
+  loadGroups() {
+    setTimeout(() => {
+      this.groups = this.stopsService.getGroups();
+    }, this.timeout);
   }
 
   clear() {

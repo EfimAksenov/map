@@ -9,6 +9,7 @@ import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
 import {StopsService} from './stops.service';
 import { CreateStopsComponent } from './create-stops/create-stops.component';
 import {HttpClientModule} from "@angular/common/http";
+import {StopDaoService} from "./stop-dao.service";
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import {HttpClientModule} from "@angular/common/http";
   ],
   providers: [
     StopsService,
+    StopDaoService,
     MarkerManager,
     GoogleMapsAPIWrapper
   ],
