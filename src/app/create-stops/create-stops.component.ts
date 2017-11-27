@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Stop} from "../stop";
-import {StopGroup} from "../stop-group";
-import {StopsService} from "../stops.service";
+import {Stop} from "../interfaces/stop";
+import {StopGroup} from "../interfaces/stop-group";
+import {StopsService} from "../services/stops.service";
 import {Observable} from "rxjs/Observable";
 
 @Component({
@@ -15,18 +15,13 @@ export class CreateStopsComponent implements OnInit {
   @Input("lng") initLng = 82.932969;
   @Input("zoom") initZoom = 15;
 
-  stops: Stop[] = new Array();
+  stops: Stop[] = [];
   groups: Observable<StopGroup[]>;
-  group: StopGroup;
+  group: StopGroup = {groupName: ''};
 
   timeout = 1000;
 
-  constructor(private stopsService: StopsService) {
-    this.group = {
-      uuid: "",
-      name: ""
-    };
-  }
+  constructor(private stopsService: StopsService) {}
 
   ngOnInit() {
     this.loadGroups();
@@ -34,8 +29,6 @@ export class CreateStopsComponent implements OnInit {
 
   addStop(event: any) {
     this.stops.push({
-      uuid: "",
-      groupId: "",
       coordinate: {
         lat: event.coords.lat,
         lng: event.coords.lng
@@ -48,7 +41,7 @@ export class CreateStopsComponent implements OnInit {
   }
 
   setName(stopGroupName) {
-    this.group.name = stopGroupName;
+    this.group.groupName = stopGroupName;
   }
 
   saveGroup() {
@@ -80,7 +73,7 @@ export class CreateStopsComponent implements OnInit {
   }
 
   clear() {
-    this.stops = new Array();
+    this.stops = [];
   }
 
   removeMarker(index) {

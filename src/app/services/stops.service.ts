@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Stop} from "./stop";
-import {StopGroup} from "./stop-group";
+import {Stop} from "../interfaces/stop";
+import {StopGroup} from "../interfaces/stop-group";
 import {Observable} from "rxjs/Observable";
 import {StopDaoService} from "./stop-dao.service";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
@@ -16,7 +16,7 @@ export class StopsService {
 
   saveGroup(group: StopGroup, stops: Stop[]) {
     this.stopDAO.createGroup(group).subscribe(response => {
-      group.uuid = response.entities[0].uuid;
+      group.uuid = (<any>response).entities[0].uuid;
       this.saveStopsWithConnectionToGroup(group, stops);
     }, response => {
       console.log(response);
@@ -32,6 +32,7 @@ export class StopsService {
   private saveStopsWithConnectionToGroup(group: StopGroup, stops: Stop[]) {
     stops.forEach(stop => {
       stop.groupId = group.uuid;
+      stop.stopName = group.groupName;
       this.stopDAO.createStopWithConnectionToGroup(group, stop, this.connection)
         .subscribe(null, resp => console.log(resp));
     });
@@ -59,10 +60,10 @@ export class StopsService {
     let groups: StopGroup[] = new Array();
     let subject = new BehaviorSubject(groups);
     this.stopDAO.getGroups().subscribe(response => {
-      response.entities.forEach(group => {
+      (<any>response).entities.forEach(group => {
         groups.push({
           uuid: group.uuid,
-          name: group.name
+          groupName: group.groupName
         });
       });
       subject.next(groups);
@@ -74,10 +75,11 @@ export class StopsService {
     let stops: Stop[] = new Array();
     let subject: Subject<Stop[]> = new Subject();
     this.stopDAO.getStopsByGroupAndConnection(group, this.connection).subscribe(response => {
-      response.entities.forEach(entity => {
+      (<any>response).entities.forEach(entity => {
         stops.push({
           uuid: entity.uuid,
           groupId: entity.groupId,
+          stopName: entity.stopName,
           coordinate: {
             lat: entity.coordinate.lat,
             lng: entity.coordinate.lng,
@@ -89,5 +91,24 @@ export class StopsService {
     return subject.asObservable();
   }
 
+  getAllStops(): Observable<Stop[]> {
+    let stops: Stop[] = new Array();
+    let subject: Subject<Stop[]> = new Subject();
+    this.stopDAO.getAllStops().subscribe(response => {
+      (<any>response).entities.forEach(entity => {
+        stops.push({
+          uuid: entity.uuid,
+          groupId: entity.groupId,
+          stopName: entity.stopName,
+          coordinate: {
+            lat: entity.coordinate.lat,
+            lng: entity.coordinate.lng,
+          }
+        });
+      });
+      subject.next(stops);
+    });
+    return subject.asObservable();
+  }
 
 }

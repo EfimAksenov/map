@@ -1,4 +1,17 @@
 <!-- this creates a google map on the page with the given lat/lng from -->
 <!-- the component as the initial center of the map: -->
-<app-create-stops [lat]="initLat" [lng]="initLng" [zoom]="initZoom"></app-create-stops>
-<button class="btn" (click)="createStop()">Create stop</button>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a href="" class="navbar-brant"></a></div>
+  </div>
+  <ul class="nav navbar-nav">
+    <li class="active"><a href="#">Home</a></li>
+    <li><a routerLink="/view" routerLinkActive="active">View</a></li>
+    <li><a routerLink="/createStops" routerLinkActive="active">Create Stops</a></li>
+    <li><a routerLink="/createRoute" routerLinkActive="active">Create Route</a></li>
+  </ul>
+</nav>
+<div>
+  <router-outlet></router-outlet>
+</div>

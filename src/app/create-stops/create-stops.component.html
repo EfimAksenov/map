@@ -1,9 +1,10 @@
 <div class="container">
   <div class="row">
     <div class="col-md-4">
+      <h2>Groups</h2>
       <ul class="list-group">
         <li class="list-group-item" (dblclick)="loadStops(g)" *ngFor="let g of groups | async">
-          {{g.name}}
+          {{g.groupName}}
           <button class="btn btn-default btn-sm" (click)="updateGroup(g)">Update</button>
           <button class="btn btn-default btn-sm" (click)="deleteGroup(g)">Delete</button>
         </li>
@@ -23,12 +24,7 @@
           (markerClick)="removeMarker(i)">
         </agm-marker>
       </agm-map>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-4"></div>
-    <div class="col-sm-8">
-      <input type="text" [value]="group.name" #stopGroupName (change)="setName(stopGroupName.value)">
+      <input type="text" [value]="group.groupName" #stopGroupName (change)="setName(stopGroupName.value)">
       <button class="btn btn-default" (click)="saveGroup()">Save</button>
       <button class="btn" (click)="clear()">Clear</button>
     </div>

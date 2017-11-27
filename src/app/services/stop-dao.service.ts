@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {StopGroup} from "./stop-group";
+import {StopGroup} from "../interfaces/stop-group";
 import {Observable} from "rxjs/Observable";
-import {Stop} from "./stop";
+import {Stop} from "../interfaces/stop";
 
 @Injectable()
 export class StopDaoService {
@@ -41,5 +41,7 @@ export class StopDaoService {
     return this.http.delete(this.urlGroups + group.uuid);
   }
 
-
+  getAllStops(): Observable<Object> {
+    return this.http.get(this.url + 'stops');
+  }
 }

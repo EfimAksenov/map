@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-2">
+      <h2>City</h2>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let city of cities"
+          (click)="selectCity(city)">
+          {{city.name}}</li>
+      </ul>
+    </div>
+    <div class="col-md-2">
+      <h2>Route</h2>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let r of routes">{{r.routeName}}</li>
+      </ul>
+    </div>
+    <div class="col-md-2">
+      <h2>Stops</h2>
+      <ul class="list-group" >
+        <li class="list-group-item" *ngFor="let s of route.stops">{{s.stopName}}</li>
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <agm-map
+        (mapClick)="drawLine($event.coords)"
+        [latitude]="initLat" [longitude]="initLng" [zoom]="initZoom">
+        <agm-marker
+          *ngFor="let s of stops; let i = index"
+          [latitude]="s.coordinate.lat"
+          [longitude]="s.coordinate.lng"
+          [label]="'S'"
+          (markerClick)="addToRoute(s)">
+        </agm-marker>
+
+        <agm-polyline [editable]="true" #POLYLINE (lineClick)="log(POLYLINE)">
+          <agm-polyline-point
+            *ngFor="let p of route.points" [latitude]="p.lat" [longitude]="p.lng">
+          </agm-polyline-point>
+        </agm-polyline>
+      </agm-map>
+
+      <input type="text" [value]="route.routeName" #routeName (change)="setName(routeName.value)">
+
+      <button class="btn" (click)="saveRoute()">Save</button>
+    </div>
+  </div>
+</div>
