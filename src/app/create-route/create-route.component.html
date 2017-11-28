@@ -1,28 +1,18 @@
 <div class="container">
   <div class="row">
     <div class="col-md-2">
-      <h2>City</h2>
-      <ul class="list-group">
-        <li class="list-group-item" *ngFor="let city of cities"
-          (click)="selectCity(city)">
-          {{city.name}}</li>
-      </ul>
+      <app-list [title]="'City'" [array]="cities" (onSelect)="selectCity($event)"></app-list>
     </div>
     <div class="col-md-2">
-      <h2>Route</h2>
-      <ul class="list-group">
-        <li class="list-group-item" *ngFor="let r of routes">{{r.routeName}}</li>
-      </ul>
+      <app-list [title]="'Route'" [array]="routes" (onSelect)="loadRoute($event)"></app-list>
     </div>
     <div class="col-md-2">
-      <h2>Stops</h2>
-      <ul class="list-group" >
-        <li class="list-group-item" *ngFor="let s of route.stops">{{s.stopName}}</li>
-      </ul>
+      <app-list [title]="'Stops'" [array]="route.stops"></app-list>
     </div>
     <div class="col-md-6">
       <agm-map
-        (mapClick)="drawLine($event.coords)"
+        (mapClick)="addPoint($event.coords)"
+        (mapRightClick)="removeLastPoint()"
         [latitude]="initLat" [longitude]="initLng" [zoom]="initZoom">
         <agm-marker
           *ngFor="let s of stops; let i = index"
@@ -32,16 +22,13 @@
           (markerClick)="addToRoute(s)">
         </agm-marker>
 
-        <agm-polyline [editable]="true" #POLYLINE (lineClick)="log(POLYLINE)">
+        <agm-polyline>
           <agm-polyline-point
             *ngFor="let p of route.points" [latitude]="p.lat" [longitude]="p.lng">
           </agm-polyline-point>
         </agm-polyline>
       </agm-map>
-
-      <input type="text" [value]="route.routeName" #routeName (change)="setName(routeName.value)">
-
-      <button class="btn" (click)="saveRoute()">Save</button>
     </div>
   </div>
+  <app-edit-form [entity]="route" (onSave)="saveRoute($event)"></app-edit-form>
 </div>

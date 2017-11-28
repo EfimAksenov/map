@@ -1,26 +1,28 @@
 import {Injectable} from '@angular/core';
-import {RoutesDaoService} from "./routes-dao.service";
 import {Subject} from "rxjs/Subject";
 import {Observable} from "rxjs/Observable";
-import {City} from "../interfaces/city";
 import {Stop} from "../interfaces/stop";
 import {CustomRoute} from "../interfaces/custom-route";
 import {Coordinate} from "../interfaces/coordinate";
+import {HttpRequestService} from "./http-request.service";
+import {Entity} from "../interfaces/entity";
 
 @Injectable()
 export class RoutesService {
 
-  constructor(private routesDAO: RoutesDaoService) {
+  routeToCityConnection = 'haveroutes';
+
+  constructor(private http: HttpRequestService) {
   }
 
-  getCities(): Observable<City[]> {
-    let subject: Subject<City[]> = new Subject();
-    let cities: City[] = new Array();
-    this.routesDAO.getCities().subscribe(response => {
+  getCities(): Observable<Entity[]> {
+    const subject: Subject<Entity[]> = new Subject();
+    const cities: Entity[] = new Array();
+    this.http.getCities().subscribe(response => {
       (<any>response).entities.forEach(city => {
         cities.push({
           uuid: city.uuid,
-          name: city.name
+          entityName: city.name
         });
       });
       subject.next(cities);
@@ -28,40 +30,49 @@ export class RoutesService {
     return subject.asObservable();
   }
 
-  addStopToRoute(stop: Stop, route: CustomRoute): CustomRoute {
-    route.stops.push(stop);
-    return route;
-  }
-
   makeRouteInstance(): CustomRoute {
-    let route: CustomRoute = {
-      routeName: '',
+    const route: CustomRoute = {
+      entityName: '',
       stops: new Array<Stop>(),
       points: new Array<Coordinate>()
-    }
+    };
     return route;
   }
 
-  saveRoute(route: CustomRoute, city: City) {
-    this.routesDAO.saveRouteWithConnectionToCity(route, city, 'have').subscribe(null, error2 => {
+  saveRoute(route: CustomRoute, city: Entity) {
+    this.http.saveRouteWithConnectionToCity(route, city, this.routeToCityConnection).subscribe(null, error2 => {
       console.log(error2);
     });
   }
 
-  getRoutes(): Observable<CustomRoute[]> {
-    let subject: Subject<CustomRoute[]> = new Subject();
-    let routes: CustomRoute[] = [];
-    this.routesDAO.getRoutes().subscribe(response => {
+  getRoutes(city: Entity): Observable<CustomRoute[]> {
+    const subject: Subject<CustomRoute[]> = new Subject();
+    const routes: CustomRoute[] = [];
+    this.http.getRoutesByConnectionToCity(city, this.routeToCityConnection).subscribe(response => {
       (<any>response).entities.forEach(route => {
         routes.push({
           uuid: route.uuid,
-          routeName: route.routeName,
+          entityName: route.entityName,
           cityId: route.cityId,
           stops: route.stops,
           points: route.points
         });
       });
       subject.next(routes);
+    });
+    return subject.asObservable();
+  }
+
+  getRoute(route: Entity): Observable<CustomRoute> {
+    const subject: Subject<CustomRoute> = new Subject();
+    const loadedRoute: CustomRoute = {};
+    this.http.getRouteById(route).subscribe(response => {
+      loadedRoute.uuid = (<any>response).entities[0].uuid;
+      loadedRoute.entityName = (<any>response).entities[0].entityName;
+      loadedRoute.cityId = (<any>response).entities[0].cityId;
+      loadedRoute.stops = (<any>response).entities[0].stops;
+      loadedRoute.points = (<any>response).entities[0].points;
+      subject.next(loadedRoute);
     });
     return subject.asObservable();
   }

@@ -1,0 +1,12 @@
+<form #form="ngForm">
+  <div class="form-group">
+    <label for="entityName">Name</label>
+    <input [(ngModel)]="entity.entityName" name="entityName" id="entityName" type="text" class="form-control" [value]="entity.entityName">
+
+    <ng-content></ng-content>
+
+    <button class="btn btn-primary" (click)="save(form.value)">Save</button>
+    <button class="btn btn-primary" (click)="update(form.value)">Update</button>
+    <button class="btn btn-default" (click)="clear(form)">Clear</button>
+  </div>
+</form>

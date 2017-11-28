@@ -1,21 +1,21 @@
 import {Injectable} from '@angular/core';
 import {Stop} from "../interfaces/stop";
-import {StopGroup} from "../interfaces/stop-group";
 import {Observable} from "rxjs/Observable";
-import {StopDaoService} from "./stop-dao.service";
+import {HttpRequestService} from "./http-request.service";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Subject} from "rxjs/Subject";
+import {Entity} from "../interfaces/entity";
 
 @Injectable()
 export class StopsService {
 
   private connection = 'contain';
 
-  constructor(private stopDAO: StopDaoService) {
+  constructor(private http: HttpRequestService) {
   }
 
-  saveGroup(group: StopGroup, stops: Stop[]) {
-    this.stopDAO.createGroup(group).subscribe(response => {
+  saveGroup(group: Entity, stops: Stop[]) {
+    this.http.createGroup(group).subscribe(response => {
       group.uuid = (<any>response).entities[0].uuid;
       this.saveStopsWithConnectionToGroup(group, stops);
     }, response => {
@@ -23,30 +23,31 @@ export class StopsService {
     });
   }
 
-  updateGroup(group: StopGroup, stops: Stop[]) {
-  this.deleteGroup(group).subscribe(() => {
-    this.saveGroup(group, stops);
-  });
+  // todo: refactor
+  updateGroup(group: Entity, stops: Stop[]) {
+    this.deleteGroup(group).subscribe(() => {
+      this.saveGroup(group, stops);
+    });
   }
 
-  private saveStopsWithConnectionToGroup(group: StopGroup, stops: Stop[]) {
+  private saveStopsWithConnectionToGroup(group: Entity, stops: Stop[]) {
     stops.forEach(stop => {
       stop.groupId = group.uuid;
-      stop.stopName = group.groupName;
-      this.stopDAO.createStopWithConnectionToGroup(group, stop, this.connection)
+      stop.entityName = group.entityName;
+      this.http.createStopWithConnectionToGroup(group, stop, this.connection)
         .subscribe(null, resp => console.log(resp));
     });
   }
 
-  deleteGroup(group: StopGroup): Observable<{}> {
-    let subject = new Subject();
+  deleteGroup(group: Entity): Observable<{}> {
+    const subject = new Subject();
     this.getStopsByGroup(group).subscribe(stops => {
       stops.forEach(stop => {
-        this.stopDAO.deleteStop(stop).subscribe(null, error => {
+        this.http.deleteStop(stop).subscribe(null, error => {
           console.log(error);
         });
       });
-      this.stopDAO.deleteGroup(group).subscribe(() => {
+      this.http.deleteGroup(group).subscribe(() => {
         subject.next(group);
       }, error => {
         console.log(error);
@@ -56,14 +57,14 @@ export class StopsService {
   }
 
 
-  getGroups(): Observable<StopGroup []> {
-    let groups: StopGroup[] = new Array();
-    let subject = new BehaviorSubject(groups);
-    this.stopDAO.getGroups().subscribe(response => {
+  getGroups(): Observable<Entity []> {
+    const groups: Entity[] = new Array();
+    const subject = new BehaviorSubject(groups);
+    this.http.getGroups().subscribe(response => {
       (<any>response).entities.forEach(group => {
         groups.push({
           uuid: group.uuid,
-          groupName: group.groupName
+          entityName: group.entityName
         });
       });
       subject.next(groups);
@@ -71,15 +72,15 @@ export class StopsService {
     return subject.asObservable();
   }
 
-  getStopsByGroup(group: StopGroup): Observable<Stop[]> {
-    let stops: Stop[] = new Array();
-    let subject: Subject<Stop[]> = new Subject();
-    this.stopDAO.getStopsByGroupAndConnection(group, this.connection).subscribe(response => {
+  getStopsByGroup(group: Entity): Observable<Stop[]> {
+    const stops: Stop[] = new Array();
+    const subject: Subject<Stop[]> = new Subject();
+    this.http.getStopsByGroupAndConnection(group, this.connection).subscribe(response => {
       (<any>response).entities.forEach(entity => {
         stops.push({
           uuid: entity.uuid,
           groupId: entity.groupId,
-          stopName: entity.stopName,
+          entityName: entity.entityName,
           coordinate: {
             lat: entity.coordinate.lat,
             lng: entity.coordinate.lng,
@@ -92,14 +93,14 @@ export class StopsService {
   }
 
   getAllStops(): Observable<Stop[]> {
-    let stops: Stop[] = new Array();
-    let subject: Subject<Stop[]> = new Subject();
-    this.stopDAO.getAllStops().subscribe(response => {
+    const stops: Stop[] = new Array();
+    const subject: Subject<Stop[]> = new Subject();
+    this.http.getAllStops().subscribe(response => {
       (<any>response).entities.forEach(entity => {
         stops.push({
           uuid: entity.uuid,
           groupId: entity.groupId,
-          stopName: entity.stopName,
+          entityName: entity.entityName,
           coordinate: {
             lat: entity.coordinate.lat,
             lng: entity.coordinate.lng,

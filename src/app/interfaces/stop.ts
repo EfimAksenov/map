@@ -1,8 +1,7 @@
 import {Coordinate} from "./coordinate";
+import {Entity} from "./entity";
 
-export interface Stop {
-  uuid?: string;
+export interface Stop extends Entity{
   groupId?: string;
-  stopName?: string;
   coordinate: Coordinate;
 }

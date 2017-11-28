@@ -1,20 +1,13 @@
 <div class="container">
   <div class="row">
     <div class="col-md-4">
-      <h2>Groups</h2>
-      <ul class="list-group">
-        <li class="list-group-item" (dblclick)="loadStops(g)" *ngFor="let g of groups | async">
-          {{g.groupName}}
-          <button class="btn btn-default btn-sm" (click)="updateGroup(g)">Update</button>
-          <button class="btn btn-default btn-sm" (click)="deleteGroup(g)">Delete</button>
-        </li>
-
-      </ul>
+      <app-list [title]="'Group'" [array]="groups" (onSelect)="loadStops($event)" (onDelete)="deleteGroup($event)"
+      [isDeleteButtonActive]="true">
+      </app-list>
     </div>
     <div class="col-md-8">
       <agm-map
         (mapClick)="addStop($event)"
-        (mapRightClick)="deleteStop($event)"
         [latitude]="initLat" [longitude]="initLng" [zoom]="initZoom">
         <agm-marker
           *ngFor="let s of stops; let i = index"
@@ -24,9 +17,9 @@
           (markerClick)="removeMarker(i)">
         </agm-marker>
       </agm-map>
-      <input type="text" [value]="group.groupName" #stopGroupName (change)="setName(stopGroupName.value)">
-      <button class="btn btn-default" (click)="saveGroup()">Save</button>
-      <button class="btn" (click)="clear()">Clear</button>
+      <button class="btn" (click)="clear()">Clear map</button>
     </div>
   </div>
+  <app-edit-form (onSave)="saveGroup($event)" (onUpdate)="updateGroup($event)" [entity]="selectedGroup"></app-edit-form>
 </div>
+

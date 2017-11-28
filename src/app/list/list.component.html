@@ -1,0 +1,8 @@
+<h2>{{title}}</h2>
+<ul class="list-group">
+  <li class="list-group-item" (dblclick)="loadEntity(a)" *ngFor="let a of array"
+      [class.active]="a.uuid == selectedEntity.uuid">
+    {{a.entityName}}
+    <button *ngIf="isDeleteButtonActive" class="btn btn-sm pull-right" (click)="deleteEntity(a)">Delete</button>
+  </li>
+</ul>

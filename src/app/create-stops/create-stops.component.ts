@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Stop} from "../interfaces/stop";
-import {StopGroup} from "../interfaces/stop-group";
 import {StopsService} from "../services/stops.service";
 import {Observable} from "rxjs/Observable";
+import {Entity} from "../interfaces/entity";
 
 @Component({
   selector: 'app-create-stops',
@@ -16,16 +16,50 @@ export class CreateStopsComponent implements OnInit {
   @Input("zoom") initZoom = 15;
 
   stops: Stop[] = [];
-  groups: Observable<StopGroup[]>;
-  group: StopGroup = {groupName: ''};
+  groups: Entity[] = [];
+  selectedGroup: Entity = {};
 
   timeout = 1000;
 
-  constructor(private stopsService: StopsService) {}
+  constructor(private stopsService: StopsService) {
+  }
 
   ngOnInit() {
     this.loadGroups();
   }
+
+  saveGroup(group: Entity) {
+    this.stopsService.saveGroup(group, this.stops);
+    this.loadGroups();
+  }
+
+  updateGroup(group: Entity) {
+    this.selectedGroup.entityName = group.entityName;
+    this.stopsService.updateGroup(this.selectedGroup, this.stops);
+    this.loadGroups();
+  }
+
+  deleteGroup(group: Entity) {
+    this.stopsService.deleteGroup(group);
+    this.loadGroups();
+  }
+
+  loadStops(group: Entity) {
+    this.stopsService.getStopsByGroup(group).subscribe(response => {
+      this.stops = response;
+    });
+    this.selectedGroup = group;
+  }
+
+  loadGroups() {
+    setTimeout(() => {
+      this.stopsService.getGroups().subscribe(groups => {
+        this.groups = groups;
+      });
+    }, this.timeout);
+  }
+
+  // Map events
 
   addStop(event: any) {
     this.stops.push({
@@ -34,42 +68,6 @@ export class CreateStopsComponent implements OnInit {
         lng: event.coords.lng
       }
     });
-  }
-
-  deleteStop(event: MouseEvent) {
-    this.stops.pop();
-  }
-
-  setName(stopGroupName) {
-    this.group.groupName = stopGroupName;
-  }
-
-  saveGroup() {
-    this.stopsService.saveGroup(this.group, this.stops);
-    this.loadGroups();
-  }
-
-  updateGroup(group: StopGroup) {
-    this.stopsService.updateGroup(group, this.stops);
-    this.loadGroups();
-  }
-
-  deleteGroup(group: StopGroup) {
-    this.stopsService.deleteGroup(this.group);
-    this.loadGroups();
-  }
-
-  loadStops(group: StopGroup) {
-    this.stopsService.getStopsByGroup(group).subscribe(response => {
-      this.stops = response;
-    });
-    this.group = group;
-  }
-
-  loadGroups() {
-    setTimeout(() => {
-      this.groups = this.stopsService.getGroups();
-    }, this.timeout);
   }
 
   clear() {

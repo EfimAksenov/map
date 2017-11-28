@@ -1,10 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {StopsService} from "../services/stops.service";
 import {Stop} from "../interfaces/stop";
-import {City} from "../interfaces/city";
 import {CustomRoute} from "../interfaces/custom-route";
 import {RoutesService} from "../services/routes.service";
 import {Coordinate} from "../interfaces/coordinate";
+import {Entity} from "../interfaces/entity";
 
 @Component({
   selector: 'app-create-route',
@@ -20,10 +20,10 @@ export class CreateRouteComponent implements OnInit {
   timeout = 1000;
 
   stops: Stop[] = [];
-  cities: City[] = [];
+  cities: Entity[] = [];
   routes: CustomRoute[] = [];
   route: CustomRoute;
-  selectedCity: City;
+  selectedCity: Entity;
 
   constructor(private stopService: StopsService, private routesService: RoutesService) {
     this.route = routesService.makeRouteInstance();
@@ -33,45 +33,54 @@ export class CreateRouteComponent implements OnInit {
     this.stopService.getAllStops().subscribe(stops => {
       this.stops = stops;
     });
-
     this.routesService.getCities().subscribe(cities => {
       this.cities = cities;
     });
-
-    this.loadRoutes();
   }
 
-  addToRoute(stop: Stop) {
-    this.route = this.routesService.addStopToRoute(stop, this.route);
-    this.drawLine(stop.coordinate);
+
+  selectCity(city: Entity) {
+    this.selectedCity = city;
+    this.route.cityId = city.uuid;
+    this.loadRoutesList(this.selectedCity);
   }
 
-  drawLine(event: Coordinate) {
+  saveRoute(event) {
+    this.route.entityName = event.entityName;
+    this.routesService.saveRoute(this.route, this.selectedCity);
+    this.loadRoutesList(this.selectedCity);
+  }
+
+  loadRoutesList(city: Entity) {
+    setTimeout(() => {
+      this.routesService.getRoutes(city).subscribe(routes => {
+        this.routes = routes;
+      });
+    }, this.timeout);
+  }
+
+  loadRoute(route: Entity) {
+    this.routesService.getRoute(route).subscribe(loadedRoute => {
+      this.route = loadedRoute;
+    });
+  }
+
+  // Map events
+
+  addPoint(event: Coordinate) {
     this.route.points.push({
       lat: event.lat,
       lng: event.lng
     });
   }
 
-  setName(name: string) {
-    this.route.routeName = name;
+  removeLastPoint() {
+    this.route.points.splice(this.route.points.length - 1, 1);
   }
 
-  selectCity(city: City) {
-    this.selectedCity = city;
-    this.route.cityId = city.uuid;
+  addToRoute(stop: Stop) {
+    this.route.stops.push(stop);
+    this.addPoint(stop.coordinate);
   }
 
-  saveRoute() {
-    this.routesService.saveRoute(this.route, this.selectedCity);
-    this.loadRoutes();
-  }
-
-  loadRoutes() {
-    setTimeout(() => {
-      this.routesService.getRoutes().subscribe(routes => {
-        this.routes = routes;
-      });
-    }, this.timeout);
-  }
 }
