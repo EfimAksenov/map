@@ -1,3 +1,30 @@
-<p>
-  view works!
-</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-2">
+      <app-list [title]="'City'" [array]="cities" (onSelect)="selectCity($event)"></app-list>
+    </div>
+    <div class="col-md-2">
+      <app-list [title]="'Route'" [array]="routes" (onSelect)="loadRoute($event)"></app-list>
+    </div>
+    <div class="col-md-2">
+      <app-list [title]="'Stops'" [array]="route.stops"></app-list>
+    </div>
+    <div class="col-md-6">
+      <agm-map
+        [latitude]="initLat" [longitude]="initLng" [zoom]="initZoom">
+        <agm-marker
+          *ngFor="let s of route.stops"
+          [latitude]="s.coordinate.lat"
+          [longitude]="s.coordinate.lng"
+          [label]="'S'">
+        </agm-marker>
+
+        <agm-polyline>
+          <agm-polyline-point
+            *ngFor="let p of route.points" [latitude]="p.lat" [longitude]="p.lng">
+          </agm-polyline-point>
+        </agm-polyline>
+      </agm-map>
+    </div>
+  </div>
+</div>
