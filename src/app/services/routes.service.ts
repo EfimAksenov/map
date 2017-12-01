@@ -39,10 +39,14 @@ export class RoutesService {
     return route;
   }
 
-  saveRoute(route: CustomRoute, city: Entity) {
-    this.http.saveRouteWithConnectionToCity(route, city, this.routeToCityConnection).subscribe(null, error2 => {
+  saveRoute(route: CustomRoute, city: Entity): Observable<null> {
+    const subject = new Subject<null>();
+    this.http.saveRouteWithConnectionToCity(route, city, this.routeToCityConnection).subscribe(() => {
+      subject.next(null);
+    }, error2 => {
       console.log(error2);
     });
+    return subject.asObservable();
   }
 
   getRoutes(city: Entity): Observable<CustomRoute[]> {
@@ -73,6 +77,20 @@ export class RoutesService {
       loadedRoute.stops = (<any>response).entities[0].stops;
       loadedRoute.points = (<any>response).entities[0].points;
       subject.next(loadedRoute);
+    });
+    return subject.asObservable();
+  }
+
+  deleteRouteById(route: Entity) {
+    this.http.deleteRouteById(route).subscribe(null, error2 => {
+      console.log(error2);
+    });
+  }
+
+  updateRoute(route: CustomRoute): Observable<null> {
+    const subject: Subject<null> = new Subject();
+    this.http.updateRoute(route).subscribe(() => {
+      subject.next(null);
     });
     return subject.asObservable();
   }

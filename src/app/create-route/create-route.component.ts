@@ -47,22 +47,39 @@ export class CreateRouteComponent implements OnInit {
 
   saveRoute(event) {
     this.route.entityName = event.entityName;
-    this.routesService.saveRoute(this.route, this.selectedCity);
-    this.loadRoutesList(this.selectedCity);
+    this.routesService.saveRoute(this.route, this.selectedCity).subscribe(() => {
+      this.loadRoutesList(this.selectedCity);
+    });
   }
 
   loadRoutesList(city: Entity) {
-    setTimeout(() => {
-      this.routesService.getRoutes(city).subscribe(routes => {
-        this.routes = routes;
-      });
-    }, this.timeout);
+    this.routesService.getRoutes(city).subscribe(routes => {
+      this.routes = routes;
+    });
   }
 
   loadRoute(route: Entity) {
     this.routesService.getRoute(route).subscribe(loadedRoute => {
       this.route = loadedRoute;
     });
+  }
+
+  deleteRoute(route: Entity) {
+    this.routesService.deleteRouteById(route);
+    this.loadRoutesList(this.selectedCity);
+  }
+
+  updateRoute(route: Entity) {
+    this.route.entityName = route.entityName;
+    this.routesService.updateRoute(this.route).subscribe(() => {
+      this.loadRoutesList(this.selectedCity);
+    });
+  }
+
+  deleteStopFromList(stop: Entity) {
+    this.route.stops.splice(this.route.stops.findIndex(stopInArray => {
+      return stop.uuid.localeCompare(stopInArray.uuid) === 0;
+    }), 1);
   }
 
   // Map events

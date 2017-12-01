@@ -4,10 +4,12 @@
       <app-list [title]="'City'" [array]="cities" (onSelect)="selectCity($event)"></app-list>
     </div>
     <div class="col-md-2">
-      <app-list [title]="'Route'" [array]="routes" (onSelect)="loadRoute($event)"></app-list>
+      <app-list [title]="'Route'" [array]="routes" (onSelect)="loadRoute($event)"
+                [isDeleteButtonActive]="true" (onDelete)="deleteRoute($event)"></app-list>
     </div>
     <div class="col-md-2">
-      <app-list [title]="'Stops'" [array]="route.stops"></app-list>
+      <app-list [title]="'Stops'" [array]="route.stops"
+                [isDeleteButtonActive]="true" (onDelete)="deleteStopFromList($event)"></app-list>
     </div>
     <div class="col-md-6">
       <agm-map
@@ -30,5 +32,5 @@
       </agm-map>
     </div>
   </div>
-  <app-edit-form [entity]="route" (onSave)="saveRoute($event)"></app-edit-form>
+  <app-edit-form [entity]="route" (onSave)="saveRoute($event)" (onUpdate)="updateRoute($event)"></app-edit-form>
 </div>

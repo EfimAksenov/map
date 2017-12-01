@@ -10,6 +10,8 @@ export class HttpRequestService {
 
   url = 'http://10.1.1.161:8080/TEST-ORGANIZATION/MAPS/';
   urlGroups = this.url + 'stopGroups/';
+  urlCities = this.url + 'cities/';
+  urlRoutes = this.url + 'routes/';
 
   constructor(private http: HttpClient) {
   }
@@ -47,22 +49,30 @@ export class HttpRequestService {
   }
 
   getCities(): Observable<Object> {
-    return this.http.get(this.url + 'cities');
+    return this.http.get(this.urlCities);
   }
 
   saveRouteWithConnectionToCity(route: CustomRoute, city: Entity, connection: string): Observable<Object> {
-    return this.http.post(this.url + 'cities/' + city.uuid + '/' + connection + '/routes/', route);
+    return this.http.post(this.urlCities + city.uuid + '/' + connection + '/routes/', route);
   }
 
   getRoutesByConnectionToCity(city: Entity, connection: string): Observable<Object> {
-    return this.http.get(this.url + 'cities/' + city.uuid + '/' + connection);
+    return this.http.get(this.urlCities + city.uuid + '/' + connection);
   }
 
   getRouteById(route: Entity): Observable<Object> {
-    return this.http.get(this.url + 'routes/' + route.uuid);
+    return this.http.get(this.urlRoutes + route.uuid);
   }
 
   getAllRoutes(): Observable<Object> {
-    return this.http.get(this.url + 'routes');
+    return this.http.get(this.urlRoutes);
+  }
+
+  deleteRouteById(route: Entity): Observable<Object> {
+    return this.http.delete(this.urlRoutes + route.uuid);
+  }
+
+  updateRoute(route: CustomRoute): Observable<Object> {
+    return this.http.put(this.urlRoutes + route.uuid, route);
   }
 }
