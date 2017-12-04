@@ -7,13 +7,13 @@
       <app-list [title]="'Route'" [array]="routes" (onSelect)="loadRoute($event)"></app-list>
     </div>
     <div class="col-md-2">
-      <app-list [title]="'Stops'" [array]="route.stops"></app-list>
+      <app-list [title]="'Stops'" [array]="route.stopsForward"></app-list>
     </div>
     <div class="col-md-6">
       <agm-map
         [latitude]="initLat" [longitude]="initLng" [zoom]="initZoom">
         <agm-marker
-          *ngFor="let s of route.stops"
+          *ngFor="let s of route.stopsForward"
           [latitude]="s.coordinate.lat"
           [longitude]="s.coordinate.lng"
           [label]="'S'">

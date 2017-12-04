@@ -4,6 +4,7 @@ import {Entity} from "./entity";
 
 export interface CustomRoute extends Entity{
   cityId?: string;
-  stops?: Stop[];
+  stopsForward?: Stop[];
+  stopsBack?: Stop[];
   points?: Coordinate[];
 }

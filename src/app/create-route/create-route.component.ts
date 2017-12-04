@@ -76,10 +76,12 @@ export class CreateRouteComponent implements OnInit {
     });
   }
 
-  deleteStopFromList(stop: Entity) {
-    this.route.stops.splice(this.route.stops.findIndex(stopInArray => {
-      return stop.uuid.localeCompare(stopInArray.uuid) === 0;
-    }), 1);
+  deleteStopFromForwardList(stop: Entity) {
+    this.route.stopsForward = this.routesService.deleteStopFromList(this.route.stopsForward, stop);
+  }
+
+  deleteStopFromBackList(stop: Entity) {
+    this.route.stopsBack = this.routesService.deleteStopFromList(this.route.stopsBack, stop);
   }
 
   // Map events
@@ -96,7 +98,7 @@ export class CreateRouteComponent implements OnInit {
   }
 
   addToRoute(stop: Stop) {
-    this.route.stops.push(stop);
+    this.route.stopsForward.push(stop);
     this.addPoint(stop.coordinate);
   }
 

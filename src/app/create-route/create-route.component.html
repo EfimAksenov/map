@@ -8,8 +8,10 @@
                 [isDeleteButtonActive]="true" (onDelete)="deleteRoute($event)"></app-list>
     </div>
     <div class="col-md-2">
-      <app-list [title]="'Stops'" [array]="route.stops"
-                [isDeleteButtonActive]="true" (onDelete)="deleteStopFromList($event)"></app-list>
+      <app-list [title]="'Forward'" [array]="route.stopsForward"
+                [isDeleteButtonActive]="true" (onDelete)="deleteStopFromForwardList($event)"></app-list>
+      <app-list [title]="'Back'" [array]="route.stopsBack"
+                [isDeleteButtonActive]="true" (onDelete)="deleteStopFromBackList($event)"></app-list>
     </div>
     <div class="col-md-6">
       <agm-map
@@ -32,5 +34,12 @@
       </agm-map>
     </div>
   </div>
-  <app-edit-form [entity]="route" (onSave)="saveRoute($event)" (onUpdate)="updateRoute($event)"></app-edit-form>
+  <app-edit-form [entity]="route" (onSave)="saveRoute($event)" (onUpdate)="updateRoute($event)">
+    <div class="radio">
+      <label><input type="radio" name="Direction" (>Forward</label>
+    </div>
+    <div class="radio">
+      <label><input type="radio" ngModel="" name="Direction">Back</label>
+    </div>
+  </app-edit-form>
 </div>

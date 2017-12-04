@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Entity} from "../interfaces/entity";
+import {formArrayNameProvider} from "@angular/forms/src/directives/reactive_directives/form_group_name";
 
 @Component({
   selector: 'app-edit-form',
@@ -22,6 +23,7 @@ export class EditFormComponent implements OnInit {
   }
 
   clear(form) {
+    console.log(form);
     this.entity = {};
   }
 

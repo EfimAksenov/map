@@ -30,15 +30,6 @@ export class RoutesService {
     return subject.asObservable();
   }
 
-  makeRouteInstance(): CustomRoute {
-    const route: CustomRoute = {
-      entityName: '',
-      stops: new Array<Stop>(),
-      points: new Array<Coordinate>()
-    };
-    return route;
-  }
-
   saveRoute(route: CustomRoute, city: Entity): Observable<null> {
     const subject = new Subject<null>();
     this.http.saveRouteWithConnectionToCity(route, city, this.routeToCityConnection).subscribe(() => {
@@ -58,7 +49,7 @@ export class RoutesService {
           uuid: route.uuid,
           entityName: route.entityName,
           cityId: route.cityId,
-          stops: route.stops,
+          stopsForward: route.stops,
           points: route.points
         });
       });
@@ -74,7 +65,7 @@ export class RoutesService {
       loadedRoute.uuid = (<any>response).entities[0].uuid;
       loadedRoute.entityName = (<any>response).entities[0].entityName;
       loadedRoute.cityId = (<any>response).entities[0].cityId;
-      loadedRoute.stops = (<any>response).entities[0].stops;
+      loadedRoute.stopsForward = (<any>response).entities[0].stops;
       loadedRoute.points = (<any>response).entities[0].points;
       subject.next(loadedRoute);
     });
@@ -93,5 +84,24 @@ export class RoutesService {
       subject.next(null);
     });
     return subject.asObservable();
+  }
+
+  // Utils
+
+  makeRouteInstance(): CustomRoute {
+    const route: CustomRoute = {
+      entityName: '',
+      stopsForward: new Array<Stop>(),
+      stopsBack: new Array<Stop>(),
+      points: new Array<Coordinate>()
+    };
+    return route;
+  }
+
+  deleteStopFromList(stops: Stop[], stop: Entity): Stop[] {
+    stops.splice(stops.findIndex(stopInArray => {
+      return stop.uuid.localeCompare(stopInArray.uuid) === 0;
+    }), 1);
+    return stops;
   }
 }
